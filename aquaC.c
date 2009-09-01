@@ -15,8 +15,6 @@
 void main()
 {
     float temperature; 
-    char text[20];
-
 
 	lcd_init();
     lcd_putc("\f"); //limpa o lcd
@@ -35,7 +33,7 @@ void main()
 		output_high(PIN_A0);
 		delay_ms(500);    
 		temperature = ds1820_read();
-		printf("%6.4f\n\r", temperature);
+		printf(lcd_putc,"%4.2f\n\r", temperature);
 		//lcd_gotoxy(1,2);
 		//lcd_putc(text);
         output_low(PIN_A0);
