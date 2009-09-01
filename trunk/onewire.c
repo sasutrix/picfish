@@ -226,7 +226,7 @@ int onewire_crc(int oldcrc, int newbyte) {
 //} 
 
 
-float onewire_ds1822_read_temp_c_lite() { /* 0 to 125'C byte rtnd, nonparasitic mode */ 
+int onewire_ds1822_read_temp_c_lite() { /* 0 to 125'C byte rtnd, nonparasitic mode */ 
    int temperatureLSB, temperatureMSB, config, delaymult, scratchpad[9]; 
    float temp;
 
@@ -248,14 +248,14 @@ float onewire_ds1822_read_temp_c_lite() { /* 0 to 125'C byte rtnd, nonparasitic 
    temperatureLSB = scratchpad[0]; //lsb  
    temperatureMSB = scratchpad[1]; //msb 
 
-   if (temperatureMSB & 0b11111000) // if temp is negative rtn 0 
-      return(0); 
-   else {                           // else rtn the positive temp 
-      temperatureLSB=((temperatureLSB & 0b11110000)>>4); 
-      temperatureMSB=((temperatureMSB & 0b00000111)<<4); 
-      } 
+   //if (temperatureMSB & 0b11111000) // if temp is negative rtn 0 
+   //   return(0); 
+   //else {                           // else rtn the positive temp 
+   //   temperatureLSB=((temperatureLSB & 0b11110000)>>4); 
+   //   temperatureMSB=((temperatureMSB & 0b00000111)<<4); 
+   //   } 
 
-   temp = (make16(temperatureMSB,temperatureLSB))*0.0625;
+   temp = (make16(temperatureMSB,temperatureLSB));//  *0.0625;
    //return(temperatureMSB | temperatureLSB);  // OR msb&lsb
    return (temp) ;
 } 
