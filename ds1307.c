@@ -31,7 +31,39 @@
 #define DS1307_MONTH_REG    	0x05 
 #define DS1307_YEAR_REG     	0x06 
 #define DS1307_CONTROL_REG  	0x07 
- 
+
+/*
+ DS1307 SquareWave Control Register
++----+-----+-----+-----+-----+-----+-----+-----+-----+
+| BIT|  7  |  6  |  5  |  4  |  3  |  2  |  1  |  0  |
+|----+-----+-----+-----+-----------+-----+-----+-----|
+|    | OUT |  0  |  0  |SQWE |  0  |  0  | RS1 | RS0 |
++----+-----+-----+-----------------------+-----------+
+
+OUT:		Nível lógico do pino SQW/OUT quando o oscilador está desligado.
+			1: Nível lógico = 1
+			0: Nivel lógico = 0 
+			Tipicamente é setado para 0 na inicialização
+
+SQWE: 		Controla o pino SQW/OUT
+			1: Ativa Oscilador
+			0: Desativa Oscilador
+			Tipicamente é setado para 0 na inicialização
+
+RS1:RS0		Controla a frequência do pino SQW/OUT
+			0 0 1Kz
+			0 1	4.096Khz
+			1 0 8.192Khz
+			1 1 32.768Khz
+
+*/
+#define DS1307_SQW_OFF_OUTHI 0b10000000 //0x80 0d128
+#define DS1307_SQW_OFF_OUTLO 0b00000000 //0x00 0d0
+#define DS1307_SQW_1K		 0b00010000	//0x10 0d16
+#define DS1307_SQW_4K		 0b00010001 //0x11 0d17
+#define DS1307_SQW_8K		 0b00010010 //0x12 0d18
+#define DS1307_SQW_32K		 0b00010011 //0x13 0d19
+
 
 
 
@@ -53,20 +85,19 @@ void ds1307_init(void)
    i2c_write(DS1307_I2C_READ_ADDR);    // RD from RTC 
    seconds = bcd2bin(i2c_read(0));     // Read current "seconds" in DS1307 
    i2c_stop(); 
-   seconds &= 0x7F;					   	// esta linha faz:
-// pega o valor do segundos e 
-// faz um AND lógico no setimo bit
-// ex: 30 segundos = 0x1E = 0b00011110 
-//	   127d = 0x7F = 0b01111111
-//
-//     0b00011110
-//   & 0b01111111
-//     ----------
-//     0b00011110
-//
-// o sétimo bit do registro de segundos = 0 inicializa o RTC
-// o AND (&) lógico, acima só faz alterar o sétimo bit, mantendo os
-// demais como estão.									 	
+   seconds &= 0x7F;					   
+ /* 
+ A linha acima pega o valor do segundos e faz um AND lógico no setimo bit
+ ex: 30 segundos = 0x1E = 0b00011110 
+	   127d = 0x7F = 0b01111111
+
+     0b00011110
+   & 0b01111111
+     ----------
+     0b00011110
+
+ o sétimo bit do registro de segundos = 0 inicializa o RTC 
+ o AND (&) lógico, acima só faz alterar o sétimo bit, mantendo os demais como estão. */
 
    delay_us(3); 
 
@@ -77,7 +108,7 @@ void ds1307_init(void)
    i2c_start(); 
    i2c_write(DS1307_I2C_WRITE_ADDR);   // WR to RTC 
    i2c_write(DS1307_CONTROL_REG);      // Control Register 
-   i2c_write(0x80);    				   // Disable squarewave output pin 
+   i2c_write(DS1307_SQW_OFF_OUTHI);    // Disable squarewave output pin 
    i2c_stop(); 
 
 } 
@@ -105,7 +136,7 @@ void ds1307_set_date_time(BYTE day, BYTE mth, BYTE year, BYTE dow, BYTE hr, BYTE
   i2c_write(bin2bcd(day));      	// REG 4 
   i2c_write(bin2bcd(mth));      	// REG 5 
   i2c_write(bin2bcd(year));      	// REG 6 
-  i2c_write(0x80);            		// REG 7 - Disable squarewave output pin 
+  i2c_write(DS1307_SQW_OFF_OUTHI);  // REG 7 - Disable squarewave output pin 
   i2c_stop(); 
 } 
 
