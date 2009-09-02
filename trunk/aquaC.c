@@ -33,7 +33,7 @@ void main()
 
     lcd_gotoxy(1,2);
 	lcd_putc("DS1307....");
-	ds1307_init();
+	ds1307_start();
 	delay_ms(500);
 
 	lcd_putc("\f"); //limpa o lcd	
