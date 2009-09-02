@@ -18,6 +18,23 @@
 //#define RTC_SDA  PIN_C4 
 //#define RTC_SCL  PIN_C3 
 
+
+#define DS1307_I2C_WRITE_ADDR 0xD0 
+#define DS1307_I2C_READ_ADDR  0xD1
+
+// DS1307 register offsets 
+#define DS1307_SECONDS_REG		0x00 
+#define DS1307_MINUTES_REG      0x01 
+#define DS1307_HOURS_REG    	0x02 
+#define DS1307_DAY_OF_WEEK_REG 	0x03 
+#define DS1307_DATE_REG     	0x04 
+#define DS1307_MONTH_REG    	0x05 
+#define DS1307_YEAR_REG     	0x06 
+#define DS1307_CONTROL_REG  	0x07 
+ 
+
+
+
 #use i2c(master, sda=RTC_SDA, scl=RTC_SCL) 
 
 BYTE bin2bcd(BYTE binary_value); 
@@ -30,24 +47,37 @@ void ds1307_init(void)
    BYTE seconds = 0; 
 
    i2c_start(); 
-   i2c_write(0xD0);      // WR to RTC 
-   i2c_write(0x00);      // REG 0 
+   i2c_write(DS1307_I2C_WRITE_ADDR);    // WR to RTC 
+   i2c_write(DS1307_SECONDS_REG);       // REG 0 
    i2c_start(); 
-   i2c_write(0xD1);      // RD from RTC 
-   seconds = bcd2bin(i2c_read(0)); // Read current "seconds" in DS1307 
+   i2c_write(DS1307_I2C_READ_ADDR);    // RD from RTC 
+   seconds = bcd2bin(i2c_read(0));     // Read current "seconds" in DS1307 
    i2c_stop(); 
-   seconds &= 0x7F; 
+   seconds &= 0x7F;					   	// esta linha faz:
+// pega o valor do segundos e 
+// faz um AND lógico no setimo bit
+// ex: 30 segundos = 0x1E = 0b00011110 
+//	   127d = 0x7F = 0b01111111
+//
+//     0b00011110
+//   & 0b01111111
+//     ----------
+//     0b00011110
+//
+// o sétimo bit do registro de segundos = 0 inicializa o RTC
+// o AND (&) lógico, acima só faz alterar o sétimo bit, mantendo os
+// demais como estão.									 	
 
    delay_us(3); 
 
    i2c_start(); 
-   i2c_write(0xD0);      // WR to RTC 
-   i2c_write(0x00);      // REG 0 
-   i2c_write(bin2bcd(seconds));     // Start oscillator with current "seconds value 
+   i2c_write(DS1307_I2C_WRITE_ADDR);   // WR to RTC 
+   i2c_write(DS1307_SECONDS_REG);      // REG 0 
+   i2c_write(bin2bcd(seconds));        // Start oscillator with current "seconds value 
    i2c_start(); 
-   i2c_write(0xD0);      // WR to RTC 
-   i2c_write(0x07);      // Control Register 
-   i2c_write(0x80);     // Disable squarewave output pin 
+   i2c_write(DS1307_I2C_WRITE_ADDR);   // WR to RTC 
+   i2c_write(DS1307_CONTROL_REG);      // Control Register 
+   i2c_write(0x80);    				   // Disable squarewave output pin 
    i2c_stop(); 
 
 } 
@@ -66,40 +96,40 @@ void ds1307_set_date_time(BYTE day, BYTE mth, BYTE year, BYTE dow, BYTE hr, BYTE
   hr &= 0x3F; 
 
   i2c_start(); 
-  i2c_write(0xD0);            // I2C write address 
-  i2c_write(0x00);            // Start at REG 0 - Seconds 
-  i2c_write(bin2bcd(sec));      // REG 0 
-  i2c_write(bin2bcd(min));      // REG 1 
-  i2c_write(bin2bcd(hr));      // REG 2 
-  i2c_write(bin2bcd(dow));      // REG 3 
-  i2c_write(bin2bcd(day));      // REG 4 
-  i2c_write(bin2bcd(mth));      // REG 5 
-  i2c_write(bin2bcd(year));      // REG 6 
-  i2c_write(0x80);            // REG 7 - Disable squarewave output pin 
+  i2c_write(DS1307_I2C_WRITE_ADDR);          // I2C write address 
+  i2c_write(DS1307_I2C_WRITE_ADDR);          // Start at REG 0 - Seconds 
+  i2c_write(bin2bcd(sec));      	// REG 0 
+  i2c_write(bin2bcd(min));      	// REG 1 
+  i2c_write(bin2bcd(hr));      		// REG 2 
+  i2c_write(bin2bcd(dow));      	// REG 3 
+  i2c_write(bin2bcd(day));      	// REG 4 
+  i2c_write(bin2bcd(mth));      	// REG 5 
+  i2c_write(bin2bcd(year));      	// REG 6 
+  i2c_write(0x80);            		// REG 7 - Disable squarewave output pin 
   i2c_stop(); 
 } 
 
 void ds1307_get_date(BYTE &day, BYTE &mth, BYTE &year, BYTE &dow) 
 { 
   i2c_start(); 
-  i2c_write(0xD0); 
-  i2c_write(0x03);            // Start at REG 3 - Day of week 
+  i2c_write(DS1307_I2C_WRITE_ADDR); 
+  i2c_write(DS1307_DAY_OF_WEEK_REG); // Start at REG 3 - Day of week 
   i2c_start(); 
-  i2c_write(0xD1); 
+  i2c_write(DS1307_I2C_READ_ADDR); 
   dow  = bcd2bin(i2c_read() & 0x7f);   // REG 3 
   day  = bcd2bin(i2c_read() & 0x3f);   // REG 4 
   mth  = bcd2bin(i2c_read() & 0x1f);   // REG 5 
-  year = bcd2bin(i2c_read(0));            // REG 6 
+  year = bcd2bin(i2c_read(0));         // REG 6 
   i2c_stop(); 
 } 
 
 void ds1307_get_time(BYTE &hr, BYTE &min, BYTE &sec) 
 { 
   i2c_start(); 
-  i2c_write(0xD0); 
-  i2c_write(0x00);            // Start at REG 0 - Seconds 
+  i2c_write(DS1307_I2C_WRITE_ADDR); 
+  i2c_write(DS1307_SECONDS_REG);		// Start at REG 0 - Seconds 
   i2c_start(); 
-  i2c_write(0xD1); 
+  i2c_write(DS1307_I2C_READ_ADDR); 
   sec = bcd2bin(i2c_read() & 0x7f); 
   min = bcd2bin(i2c_read() & 0x7f); 
   hr  = bcd2bin(i2c_read(0) & 0x3f); 

@@ -1,4 +1,8 @@
-
+//configuracao do uc
+#include <16F887.h>
+#use delay(clock=8000000)
+#use rs232(baud=9600, UART1)
+#fuses MCLR,NOPROTECT,NOWDT, HS
 
 //configuracoes do ds1307
 #define RTC_SDA  PIN_C4 

@@ -1,17 +1,8 @@
-#include <16F887.h>
-#include <stdlib.h>
 #include <global.h>
-#use delay(clock=8000000)
 #include "flex_lcd.c"
 #include "1wire.c"
 #include "ds1820.c"
 #include "ds1307.c"
-
-#use rs232(baud=9600, UART1)
-
-
-#fuses MCLR,NOPROTECT,NOWDT, HS
-
 
 void main()
 {
@@ -46,7 +37,7 @@ void main()
     	temperature = ds1820_read();
 		lcd_gotoxy(10,1);
 		printf(lcd_putc,"%03.1f", temperature);
-        //printf(lcd_putc,"%03.1f\n\r", temperature);
+        printf("%03.1f\n\r", temperature);
 	
     	ds1307_get_time(hrs, min, sec);
         lcd_gotoxy(1,1);
