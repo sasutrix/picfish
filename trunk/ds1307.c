@@ -105,7 +105,7 @@ BYTE bin2bcd(BYTE binary_value)
   temp = binary_value; 
   retval = 0; 
 
-  while(1) 
+  while(TRUE) 
   { 
     // Get the tens digit by doing multiple subtraction 
     // of 10 from the binary value. 

@@ -6,7 +6,8 @@
  * such as the DS18B20 1-wire digital temperature sensor.
  */
 
-#define ONE_WIRE_PIN PIN_E2
+//A configuracao abaixo vai no global.h
+//#define ONE_WIRE_PIN PIN_E2
 
 /*
  * onewire_reset()
