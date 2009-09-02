@@ -23,6 +23,8 @@
 BYTE bin2bcd(BYTE binary_value); 
 BYTE bcd2bin(BYTE bcd_value); 
 
+//apenas para a primeira vez que for utilizar o ds1307
+//depois use o ds1307_start()
 void ds1307_init(void) 
 { 
    BYTE seconds = 0; 
@@ -49,6 +51,14 @@ void ds1307_init(void)
    i2c_stop(); 
 
 } 
+
+//inicia o ds1307 apos ter funcionado na bateria
+void ds1307_start(void)
+{
+   output_float(RTC_SCL);
+   output_float(RTC_SDA);
+}
+
 
 void ds1307_set_date_time(BYTE day, BYTE mth, BYTE year, BYTE dow, BYTE hr, BYTE min, BYTE sec) 
 { 
