@@ -8,11 +8,21 @@ void main()
 {
     float temperature;
 	byte sec, min, hrs; 
+	int32 dataini, datafim;
+
+	dataini=19800101230000;
+	datafim=19800101220000;
+	
     //byte day, month,yr; 
     //byte dow; 
 
 	lcd_init();
     lcd_putc("\f"); //limpa o lcd
+
+	if (datafim > dataini){
+		printf("%s","fudeu");
+	}
+
 	lcd_putc("Inicializando"); //o buffer do lcd é de 40 chars
 	lcd_gotoxy(1,2);
 	lcd_putc("LCD...");
