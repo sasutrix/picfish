@@ -1,4 +1,5 @@
 #include <global.h>
+#include <string.h>
 #include "flex_lcd.c"
 #include "1wire.c"
 #include "ds1820.c"
@@ -26,6 +27,8 @@ void main()
     float temperature;
 	byte sec, min, hrs; 
 	int32 dataini, datafim;
+	char fullcmd[4], cmd;
+	
 
 	dataini=859;
 	datafim=1432;
@@ -36,45 +39,59 @@ void main()
     //byte day, month,yr; 
     //byte dow; 
 
-	lcd_init();
-    lcd_putc("\f"); //limpa o lcd
+//	lcd_init();
+//    lcd_putc("\f"); //limpa o lcd
+//
+//
+//	lcd_putc("Inicializando"); //o buffer do lcd é de 40 chars
+//	lcd_gotoxy(1,2);
+//	lcd_putc("LCD...");
+//	delay_ms(500);
+//
+//	lcd_gotoxy(1,2);
+//	lcd_putc("DS18x20...");
+//	delay_ms(500);
+//
+//    lcd_gotoxy(1,2);
+//	lcd_putc("DS1307....");
+//	ds1307_start();
+//	delay_ms(500);
+//
+//	lcd_putc("\f"); //limpa o lcd	
+//
+	printf("%s","Ready>");
 
-	if (datafim > dataini){
-		printf("%s","fudeu");
-	}
-
-	lcd_putc("Inicializando"); //o buffer do lcd é de 40 chars
-	lcd_gotoxy(1,2);
-	lcd_putc("LCD...");
-	delay_ms(500);
-
-	lcd_gotoxy(1,2);
-	lcd_putc("DS18x20...");
-	delay_ms(500);
-
-    lcd_gotoxy(1,2);
-	lcd_putc("DS1307....");
-	ds1307_start();
-	delay_ms(500);
-
-	lcd_putc("\f"); //limpa o lcd	
 		
 
 	while(TRUE){
-		output_high(PIN_A0);
-		delay_ms(50);    
-	  
-    	temperature = ds1820_read();
-		lcd_gotoxy(10,1);
-		printf(lcd_putc,"%03.1f", temperature);
-        printf("%03.1f\n\r", temperature);
+//		output_high(PIN_A0);
+//		delay_ms(50);    
+//	  
+//    	temperature = ds1820_read();
+//		lcd_gotoxy(10,1);
+//		printf(lcd_putc,"%03.1f", temperature);
+//       
+//    	ds1307_get_time(hrs, min, sec);
+//        lcd_gotoxy(1,1);
+//        printf(lcd_putc,"\%02d:\%02d:\%02d", hrs,min,sec);
+//
+		strcpy(cmd,"EVT1");
+		
 	
-    	ds1307_get_time(hrs, min, sec);
-        lcd_gotoxy(1,1);
-        printf(lcd_putc,"\%02d:\%02d:\%02d", hrs,min,sec);
+
+        if(kbhit())	{
+			cmd=getc();
+		    printf(cmd);
+		}
+				
+		
+		//if (strcmp(getcmd, cmd)=0){
+		//	printf("OK\n\r");}
+		//else{
+		//	printf("ERR\n\r");}
 	
-        output_low(PIN_A0);
-		delay_ms(50);
-       
+//        output_low(PIN_A0);
+//		delay_ms(50);
+//       
 	}
 }
