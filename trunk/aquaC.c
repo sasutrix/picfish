@@ -3,6 +3,7 @@
 #include "1wire.c"
 #include "ds1820.c"
 #include "ds1307.c"
+#include "eeprom.c"
 
 void main()
 {
@@ -10,8 +11,13 @@ void main()
 	byte sec, min, hrs; 
 	int32 dataini, datafim;
 
-	dataini=19800101230000;
-	datafim=19800101220000;
+	dataini=859;
+	datafim=1432;
+
+	write_int16_eeprom(0,dataini);
+
+	//write_eeprom(0,859);
+	//write_eeprom(2,1430);
 	
     //byte day, month,yr; 
     //byte dow; 
