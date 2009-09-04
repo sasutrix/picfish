@@ -27,8 +27,10 @@ void main()
     float temperature;
 	byte sec, min, hrs; 
 	int32 dataini, datafim;
-	char fullcmd[4], cmd;
-	
+	char fullcmd[20], cmd;
+	int myLoop;
+
+	myLoop=0;
 
 	dataini=859;
 	datafim=1432;
@@ -64,8 +66,8 @@ void main()
 		
 
 	while(TRUE){
-//		output_high(PIN_A0);
-//		delay_ms(50);    
+		output_high(PIN_A0);
+		delay_ms(50);    
 //	  
 //    	temperature = ds1820_read();
 //		lcd_gotoxy(10,1);
@@ -75,14 +77,14 @@ void main()
 //        lcd_gotoxy(1,1);
 //        printf(lcd_putc,"\%02d:\%02d:\%02d", hrs,min,sec);
 //
-		strcpy(cmd,"EVT1");
+//		strcpy(cmd,"EVT1");
 		
 	
-
-        if(kbhit())	{
-			cmd=getc();
-		    printf(cmd);
-		}
+			if (kbhit()){
+			    cmd = getc();
+				putc(cmd);
+				fullcmd[myLoop]=cmd;
+				++myLoop;}
 				
 		
 		//if (strcmp(getcmd, cmd)=0){
@@ -90,8 +92,8 @@ void main()
 		//else{
 		//	printf("ERR\n\r");}
 	
-//        output_low(PIN_A0);
-//		delay_ms(50);
+        output_low(PIN_A0);
+		delay_ms(50);
 //       
 	}
 }
