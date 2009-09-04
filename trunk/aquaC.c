@@ -5,6 +5,22 @@
 #include "ds1307.c"
 #include "eeprom.c"
 
+
+#define Evt1_on  0x00 //lampada 1
+#define Evt1_off 0x02
+#define Evt2_on  0x04 //lampada 2
+#define Evt2_off 0x06
+#define Evt3_on  0x08 //lampada 3
+#define Evt3_off 0x0A
+#define Evt4_on  0x0C //lampada 4
+#define Evt4_off 0x0E
+#define Evt5_on  0x10 //moon light
+#define Evt5_off 0x12
+#define temp_hi  0x14 //temperatura máxima
+#define temp_lo  0x15 //temperatura mínima
+
+
+
 void main()
 {
     float temperature;
@@ -14,11 +30,9 @@ void main()
 	dataini=859;
 	datafim=1432;
 
-	write_int16_eeprom(0,dataini);
+	write_int16_eeprom(Evt1_on,dataini);
+	write_int16_eeprom(Evt1_off, datafim);
 
-	//write_eeprom(0,859);
-	//write_eeprom(2,1430);
-	
     //byte day, month,yr; 
     //byte dow; 
 
