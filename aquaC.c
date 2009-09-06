@@ -5,8 +5,10 @@
 #include "ds1820.c"
 #include "ds1307.c"
 #include "eeprom.c"
-#include "serial_cmd.c"
+//#include "serial_cmd.c"
 
+
+boolean serialCmd();
 
 #define Evt1_on  0x00 //lampada 1
 #define Evt1_off 0x02
@@ -21,82 +23,65 @@
 #define temp_hi  0x14 //temperatura máxima
 #define temp_lo  0x15 //temperatura mínima
 
-void commands();
+char fullcmd[20];
 
-void main()
-{
-
+void main(){
     float temperature;
 	byte sec, min, hrs; 
 	int32 dataini, datafim;
-	char fullcmd[20], cmd;
+	char cmd;
 	int myLoop;
-
 	myLoop=0;
-
-	dataini=859;
+    dataini=859;
 	datafim=1432;
-
 	write_int16_eeprom(Evt1_on,dataini);
 	write_int16_eeprom(Evt1_off, datafim);
-
     //byte day, month,yr; 
     //byte dow; 
-
-//	lcd_init();
-//    lcd_putc("\f"); //limpa o lcd
-//
-//
-//	lcd_putc("Inicializando"); //o buffer do lcd é de 40 chars
-//	lcd_gotoxy(1,2);
-//	lcd_putc("LCD...");
-//	delay_ms(500);
-//
-//	lcd_gotoxy(1,2);
-//	lcd_putc("DS18x20...");
-//	delay_ms(500);
-//
-//    lcd_gotoxy(1,2);
-//	lcd_putc("DS1307....");
-//	ds1307_start();
-//	delay_ms(500);
-//
-//	lcd_putc("\f"); //limpa o lcd	
-//
+    //lcd_init();
+    //lcd_putc("\f"); //limpa o lcd
+    //lcd_putc("Inicializando"); //o buffer do lcd é de 40 chars
+    //lcd_gotoxy(1,2);
+    //lcd_putc("LCD...");
+    //delay_ms(500);
+    //lcd_gotoxy(1,2);
+    //lcd_putc("DS18x20...");
+    //delay_ms(500);
+    //lcd_gotoxy(1,2);
+    //lcd_putc("DS1307....");
+    //ds1307_start();
+    //delay_ms(500);
+    //lcd_putc("\f"); //limpa o lcd	
+    //
 	printf("%s","Ready>");
-
-		
-
 	while(TRUE){
 		output_high(PIN_A0);
 		delay_ms(50);    
-//	  
-//    	temperature = ds1820_read();
-//		lcd_gotoxy(10,1);
-//		printf(lcd_putc,"%03.1f", temperature);
-//       
-//    	ds1307_get_time(hrs, min, sec);
-//        lcd_gotoxy(1,1);
-//        printf(lcd_putc,"\%02d:\%02d:\%02d", hrs,min,sec);
-//
-//		strcpy(cmd,"EVT1");
-		
-	
-			if (kbhit()){
-			    cmd = getc();
-				if (cmd == 13){
-					serialCmd(fullcmd);
-			    }	
-				putc(cmd);
-				fullcmd[myLoop]=cmd;
-				++myLoop;}
-		
-        output_low(PIN_A0);
+    //temperature = ds1820_read();
+    //lcd_gotoxy(10,1);
+    //printf(lcd_putc,"%03.1f", temperature);
+	//ds1307_get_time(hrs, min, sec);
+	//lcd_gotoxy(1,1);
+	//printf(lcd_putc,"\%02d:\%02d:\%02d", hrs,min,sec);
+		if ( kbhit() ) {
+		    cmd = getc();
+			if (cmd == 13)
+				serialCmd(fullcmd);
+		    putc(cmd);
+			fullcmd[myLoop]=cmd;
+			++myLoop;}
+		output_low(PIN_A0);
 		delay_ms(50);
 	}
+}
 
-
-
-
-
+boolean serialCmd() {
+	char Command[20] = "Mauro";
+ 
+if (strcmp(fullCmd,Command)){
+	printf("OK\n\r");
+	return (TRUE);}
+else{
+    printf("ERR\n\r");
+	return(FALSE);}
 }
