@@ -5,6 +5,7 @@
 #include "ds1820.c"
 #include "ds1307.c"
 #include "eeprom.c"
+#include "serial_cmd.c"
 
 
 #define Evt1_on  0x00 //lampada 1
@@ -20,10 +21,11 @@
 #define temp_hi  0x14 //temperatura máxima
 #define temp_lo  0x15 //temperatura mínima
 
-
+void commands();
 
 void main()
 {
+
     float temperature;
 	byte sec, min, hrs; 
 	int32 dataini, datafim;
@@ -82,18 +84,19 @@ void main()
 	
 			if (kbhit()){
 			    cmd = getc();
+				if (cmd == 13){
+					serialCmd(fullcmd);
+			    }	
 				putc(cmd);
 				fullcmd[myLoop]=cmd;
 				++myLoop;}
-				
 		
-		//if (strcmp(getcmd, cmd)=0){
-		//	printf("OK\n\r");}
-		//else{
-		//	printf("ERR\n\r");}
-	
         output_low(PIN_A0);
 		delay_ms(50);
-//       
 	}
+
+
+
+
+
 }
