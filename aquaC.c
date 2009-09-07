@@ -7,21 +7,29 @@
 #include "eeprom.c"
 //#include "serial_cmd.c"
 
+//prototipos de funcao
+void serialCmd();
 
-boolean serialCmd();
 
-#define Evt1_on  0x00 //lampada 1
-#define Evt1_off 0x02
-#define Evt2_on  0x04 //lampada 2
-#define Evt2_off 0x06
-#define Evt3_on  0x08 //lampada 3
-#define Evt3_off 0x0A
-#define Evt4_on  0x0C //lampada 4
-#define Evt4_off 0x0E
-#define Evt5_on  0x10 //moon light
-#define Evt5_off 0x12
+//definicao dos pontos de eeprom onde serao
+//gravadas os h0orarios dos eventos
+#define evt1_on  0x00 //lampada 1
+#define evt1_off 0x02 //lampada 1
+#define evt2_on  0x04 //lampada 2
+#define evt2_off  0x06 //lampada 1
+#define evt3_on  0x08 //lampada 3
+#define evt3_off  0x0A //lampada 1
+#define evt4_on  0x0C //lampada 4
+#define evt4_off  0x0E //lampada 1
+#define evt5_on  0x10 //moon light
+#define evt5_off  0x12 //lampada 1
 #define temp_hi  0x14 //temperatura máxima
 #define temp_lo  0x15 //temperatura mínima
+
+//definicao dos comandos
+#define HELP "HELP"
+#define EVT1 "EVT1"
+#define EVT2 "EVT2"
 
 char fullcmd[20];
 
@@ -57,16 +65,16 @@ void main(){
 	while(TRUE){
 		output_high(PIN_A0);
 		delay_ms(50);    
-    //temperature = ds1820_read();
-    //lcd_gotoxy(10,1);
-    //printf(lcd_putc,"%03.1f", temperature);
-	//ds1307_get_time(hrs, min, sec);
-	//lcd_gotoxy(1,1);
-	//printf(lcd_putc,"\%02d:\%02d:\%02d", hrs,min,sec);
+        //temperature = ds1820_read();
+        //lcd_gotoxy(10,1);
+        //printf(lcd_putc,"%03.1f", temperature);
+	    //ds1307_get_time(hrs, min, sec);
+	    //lcd_gotoxy(1,1);
+	    //printf(lcd_putc,"\%02d:\%02d:\%02d", hrs,min,sec);
 		if ( kbhit() ) {
 		    cmd = getc();
 			if (cmd == 13)
-				serialCmd(fullcmd);
+				serialCmd();
 		    putc(cmd);
 			fullcmd[myLoop]=cmd;
 			++myLoop;}
@@ -75,13 +83,10 @@ void main(){
 	}
 }
 
-boolean serialCmd() {
+void serialCmd() {
 	char Command[20] = "Mauro";
- 
-if (strcmp(fullCmd,Command)){
+if (strcmp(fullCmd,Command)==0)
 	printf("OK\n\r");
-	return (TRUE);}
-else{
+else
     printf("ERR\n\r");
-	return(FALSE);}
 }
